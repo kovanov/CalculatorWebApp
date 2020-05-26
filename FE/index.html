@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Calc</title>
+    <link rel="stylesheet" media="all" href="./css/style.css" />
+</head>
+
+<body>
+    <section class="main">
+        <div class="calc">
+            <input class="calc__numb" type="number" id="operand1">
+            <select class="calc__sel" id="methodSelector">
+                <option value="1">+</option>
+                <option value="2">-</option>
+                <option value="3">/</option>
+                <option value="4">*</option>
+            </select>
+            <input class="calc__numb" type="number" id="operand2">
+            <span class="calc__">=</span>
+            <input class="calc_result" type="number" id="result">
+            <button class="calc__sub" id="sendRequest">Count</button>
+            <div id="errorBox"></div>
+        </div>
+    </section>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.3/jquery.min.js"></script>
+    <script src="js/main.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,15 @@
+.main {
+    display: flex;
+    height: 100vh;
+}
+
+.calc {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.calc > * {
+    margin: 10px;
+}
