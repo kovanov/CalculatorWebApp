@@ -2,8 +2,15 @@
 {
     public class MathRequest
     {
-        public decimal Operand1 { get; set; }
-        public decimal Operand2 { get; set; }
-        public bool UseColors { get; set; }
+        public decimal[] Operands { get; set; }
+        public MathOperation OperationId { get; set; }
+    }
+
+    public enum MathOperation
+    {
+        Add,
+        Subtract,
+        Divide,
+        Multiply
     }
 }
