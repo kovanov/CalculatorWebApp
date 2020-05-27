@@ -3,25 +3,16 @@ const api = {
     controller: 'Math'
 }
 
-const methodMap = {
-    '1': 'Add',
-    '2': 'subtract',
-    '3': 'divide',
-    '4': 'multiply',
-};
-
 $('#sendRequest').on('click', function (e) {
     $('#errorBox').text('');
     let request = {
-        operand1: +$('#operand1').val(),
-        operand2: +$('#operand2').val(),
-        usecolors: true
+        operands: [+$('#operand1').val(), +$('#operand2').val()],
+        operationId:+$('#methodSelector').val()
     };
-    var method = methodMap[$('#methodSelector').val()];
 
     $.ajax({
         type: 'post',
-        url: `${api.host}/${api.controller}/${method}`,
+        url: `${api.host}/${api.controller}/Calculate`,
         data: JSON.stringify(request),
         dataType: 'json',
         contentType: 'application/json',
