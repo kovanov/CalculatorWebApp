@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
-using System.Web.Http.Cors;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Primitives;
 using WebApplication1.Responses;
-using WebApplication1.Services;
 
 namespace WebApplication1.Controllers
 {
@@ -14,63 +10,38 @@ namespace WebApplication1.Controllers
     [Route("[controller]")]
     public class MathController : ControllerBase
     {
-        private readonly CalculatorFactory _factory;
+        private readonly IMathOperationFactory _factory;
 
-        public MathController(CalculatorFactory factory)
+        public MathController(IMathOperationFactory factory)
         {
             _factory = factory;
         }
 
-
-        [HttpGet]
-        public BaseResponse<string> Get()
+        [HttpPost("Calculate")]
+        public BaseResponse<OperationResult> Calculate(MathRequest request)
         {
-            return BaseResponse.Ok("hello world");
-        }
+            var operation = _factory.Create(request.OperationId, request.Operands);
 
-        [HttpGet("Get1")]
-        public BaseResponse<string> Get1()
-        {
-            return BaseResponse.Ok("hello world1");
-        }
-
-        [HttpPost("Add")]
-        public BaseResponse<OperationResult> Add([FromBody]MathRequest request)
-        {
-            var calculator = _factory.Create(new CalculatorOptions { UseColors = request.UseColors });
-            return BaseResponse.Ok(calculator.Add(request.Operand1, request.Operand2));
-        }
-
-        [HttpPost("Subtract")]
-        public BaseResponse<OperationResult> Subtract(MathRequest request)
-        {
-            var calculator = _factory.Create(new CalculatorOptions { UseColors = request.UseColors });
-            return BaseResponse.Ok(calculator.Subtract(request.Operand1, request.Operand2));
-        }
-
-        [HttpPost("Multiply")]
-        public BaseResponse<OperationResult> Multiply(MathRequest request)
-        {
-            var calculator = _factory.Create(new CalculatorOptions { UseColors = request.UseColors });
-            return BaseResponse.Ok(calculator.Multiply(request.Operand1, request.Operand2));
-        }
-
-        [HttpPost("Divide")]
-        public BaseResponse<OperationResult> Divide(MathRequest request)
-        {
-            var calculator = _factory.Create(new CalculatorOptions { UseColors = request.UseColors });
             try
             {
-                return BaseResponse.Ok(calculator.Divide(request.Operand1, request.Operand2));
+                operation.Validate();
             }
-            catch (DivideByZeroException)
+            catch (OperandException e)
             {
-                return BaseResponse.Error<OperationResult>(1, "some msg 1");
+                return BaseResponse.Error<OperationResult>(e.ErrorCode, e.Message);
             }
-            catch
-            {
-                return BaseResponse.Error<OperationResult>(999, "some msg 2");
-            }
+
+            var result = operation.Execute();
+
+            return BaseResponse.Ok(FormatResult(result, Request.Headers.Where(x => x.Key.Contains("math-"))));
+        }
+
+        private OperationResult FormatResult(decimal result, IEnumerable<KeyValuePair<string, StringValues>> enumerable)
+        {
+            // somehow format result based on headers like math-format, math-usecolors, math-zeroifnegative whatever
+            // i think it still need to be some factory or builder that returns an ICanFormatMathResult
+            // object constructed like decorators ColorResult(FormattedResult(NonNegativeResult))
+            return result;
         }
     }
 }
