@@ -1,10 +1,7 @@
-﻿using System;
-
-namespace WebApplication1.Controllers.Operations
+﻿namespace WebApplication1.Controllers.Operations
 {
     public class DivideOperation : BinaryOperation
     {
-
         public DivideOperation(decimal a, decimal b) : base(a, b) { }
 
         public override void Validate()
